@@ -50,51 +50,58 @@ def handleQuery(query: albert.Query) -> Optional[List[albert.Item]]:
     albert.info(f"Showing results for the timestamp: {unix_timestamp}")
 
     formats = [
+        # Short Date/Time (e.g. "August 28, 2021 4:08 AM")
         {
             "modifier": "f",
-            "text": time.strftime("%-d %B %Y %I:%M", date_to_convert.timetuple()),
+            "text": date_to_convert.strftime('%B %-d, %Y %-I:%M %p'),
             "subtext": "Short Date/Time",
             "icon": DATE_ICON,
             "clipboardText": f"<t:{unix_timestamp}:f>",
         },
+        # Long Date/Time (e.g. "Saturday, August 28, 2021 4:08 AM")
         {
             "modifier": "F",
-            "text": time.strftime("%A, %-d %B %Y %I:%M", date_to_convert.timetuple()),
+            "text": date_to_convert.strftime('%A, %B %-d, %Y %-I:%M %p'),
             "subtext": "Long Date/Time",
             "icon": DATE_ICON,
             "clipboardText": f"<t:{unix_timestamp}:F>",
         },
+        # Short Time (e.g. "4:08 AM")
         {
             "modifier": "t",
-            "text": time.strftime("%I:%M", date_to_convert.timetuple()),
+            "text": date_to_convert.strftime('%-I:%M %p'),
             "subtext": "Short Time",
             "icon": TIME_ICON,
             "clipboardText": f"<t:{unix_timestamp}:t>",
         },
+        # Long Time (e.g. "4:08:48 AM")
         {
             "modifier": "T",
-            "text": time.strftime("%I:%M:%S", date_to_convert.timetuple()),
+            "text": date_to_convert.strftime('%-I:%M:%S %p'),
             "subtext": "Long Time",
             "icon": TIME_ICON,
             "clipboardText": f"<t:{unix_timestamp}:T>",
         },
+        # Short Date (e.g. "08/28/2021")
         {
             "modifier": "d",
-            "text": time.strftime("%m/%d/%Y", date_to_convert.timetuple()),
+            "text": date_to_convert.strftime('%m/%d/%Y'),
             "subtext": "Short Date",
             "icon": DATE_ICON,
             "clipboardText": f"<t:{unix_timestamp}:d>",
         },
+        # Long Date (e.g. "August 28, 2021")
         {
             "modifier": "D",
-            "text": time.strftime("%-d %B %Y", date_to_convert.timetuple()),
+            "text": date_to_convert.strftime('%B %-d, %Y'),
             "subtext": "Long Date",
             "icon": DATE_ICON,
             "clipboardText": f"<t:{unix_timestamp}:D>",
         },
+        # Relative Time (e.g. "in 2 hours")
         {
             "modifier": "R",
-            "text": time.strftime("%I:%M", date_to_convert.timetuple()),
+            "text": date_to_convert.strftime('%-I:%M %p'),
             "subtext": "Relative Time",
             "icon": RELATIVE_TIME_ICON,
             "clipboardText": f"<t:{unix_timestamp}:R>",
