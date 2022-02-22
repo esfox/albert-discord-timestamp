@@ -15,7 +15,7 @@ import dateparser
 __title__ = "Discord Timestamp Generator"
 __version__ = "0.1.0"
 __triggers__ = ["dt"]
-__authors__ = "esfox"
+__authors__ = ["esfox", "DenverCoder1"]
 __py_deps__ = ["dateparser"]
 
 LOCALE = "en-GB"  # this can be configured to any of the formats appearing below
