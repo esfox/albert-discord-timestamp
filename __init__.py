@@ -4,7 +4,7 @@
 Discord Timestamp Generator
 """
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 import time
 from typing import List, Optional
@@ -43,6 +43,46 @@ PATH = os.path.dirname(__file__)
 TIME_ICON = f"{PATH}/time.svg"
 DATE_ICON = f"{PATH}/date.svg"
 RELATIVE_TIME_ICON = f"{PATH}/relative-time.svg"
+
+
+def relative_time(date: datetime) -> str:
+    """
+    Returns a humanized string representing time difference
+    between now() and the input datetime object
+
+    eg. "2 minutes ago", "in 11 months", "a day ago", etc.
+    """
+    now = datetime.now()
+    # if the second is the same, return "now"
+    if now.strftime("%Y%m%d%H%M%S") == date.strftime("%Y%m%d%H%M%S"):
+        return "now"
+    # get the time difference between now() and the input datetime object
+    delta = date - now
+    abs_time_delta = now - (now + delta) if delta.days < 0 else delta
+    abs_time_delta += timedelta(seconds=1)  # add 1 second to avoid rounding errors
+    delta_days = abs_time_delta.days
+    delta_seconds = abs_time_delta.seconds
+    if delta_days >= 365:
+        num_years = round(delta_days / 365)
+        result = "a year" if num_years == 1 else f"{num_years} years"
+    elif delta_days >= 30:
+        num_months = round(delta_days / 30)
+        result = "a month" if num_months == 1 else f"{num_months} months"
+    elif delta_days >= 7:
+        num_weeks = round(delta_days / 7)
+        result = "a week" if num_weeks == 1 else f"{num_weeks} weeks"
+    elif delta_days >= 1:
+        result = "a day" if delta_days == 1 else f"{delta_days} days"
+    elif delta_seconds >= 3600:
+        num_hours = round(delta_seconds / 3600)
+        result = "an hour" if num_hours == 1 else f"{num_hours} hours"
+    elif delta_seconds >= 60:
+        num_minutes = round(delta_seconds / 60)
+        result = "a minute" if num_minutes == 1 else f"{num_minutes} minutes"
+    else:
+        result = "a few seconds"
+    # if the input datetime object is in the future, return "in X", otherwise "X ago"
+    return f"in {result}" if date > now else f"{result} ago"
 
 
 def handleQuery(query: albert.Query) -> Optional[List[albert.Item]]:
@@ -114,8 +154,7 @@ def handleQuery(query: albert.Query) -> Optional[List[albert.Item]]:
         },
         {
             "modifier": "R",
-            # TODO: make this show the relative time
-            "text": date_to_convert.strftime(LOCALE_FORMATS[LOCALE]["t"]),
+            "text": relative_time(date_to_convert),
             "subtext": "Relative Time",
             "icon": RELATIVE_TIME_ICON,
             "clipboardText": f"<t:{unix_timestamp}:R>",
