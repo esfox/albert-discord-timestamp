@@ -18,6 +18,26 @@ __triggers__ = ["dt"]
 __authors__ = "esfox"
 __py_deps__ = ["dateparser"]
 
+LOCALE = "en-GB"  # this can be configured to any of the formats appearing below
+
+LOCALE_FORMATS = {
+    "en-GB": {
+        "t": "%H:%S",  # 04:08
+        "T": "%H:%S:%S",  # 04:08:48
+        "d": "%d/%m/%Y",  # 28/08/2021
+        "D": "%-d %B %Y",  # 28 August 2021
+        "f": "%-d %B %Y %H:%S",  # 28 August 2021 04:08
+        "F": "%A, %-d %B %Y %H:%S",  # Saturday, 28 August 2021 04:08
+    },
+    "en-US": {
+        "t": "%-I:%M %p",  # 4:08 AM
+        "T": "%-I:%M:%S %p",  # 4:08:48 AM
+        "d": "%m/%d/%Y",  # 08/28/2021
+        "D": "%B %-d, %Y",  # August 28, 2021
+        "f": "%B %-d, %Y %-I:%M %p",  # August 28, 2021 4:08 AM
+        "F": "%A, %B %-d, %Y %-I:%M %p",  # Saturday, August 28, 2021 4:08 AM
+    },
+}
 
 PATH = os.path.dirname(__file__)
 TIME_ICON = f"{PATH}/time.svg"
@@ -50,58 +70,52 @@ def handleQuery(query: albert.Query) -> Optional[List[albert.Item]]:
     albert.info(f"Showing results for the timestamp: {unix_timestamp}")
 
     formats = [
-        # Short Date/Time (e.g. "August 28, 2021 4:08 AM")
         {
             "modifier": "f",
-            "text": date_to_convert.strftime('%B %-d, %Y %-I:%M %p'),
+            "text": date_to_convert.strftime(LOCALE_FORMATS[LOCALE]["f"]),
             "subtext": "Short Date/Time",
             "icon": DATE_ICON,
             "clipboardText": f"<t:{unix_timestamp}:f>",
         },
-        # Long Date/Time (e.g. "Saturday, August 28, 2021 4:08 AM")
         {
             "modifier": "F",
-            "text": date_to_convert.strftime('%A, %B %-d, %Y %-I:%M %p'),
+            "text": date_to_convert.strftime(LOCALE_FORMATS[LOCALE]["F"]),
             "subtext": "Long Date/Time",
             "icon": DATE_ICON,
             "clipboardText": f"<t:{unix_timestamp}:F>",
         },
-        # Short Time (e.g. "4:08 AM")
         {
             "modifier": "t",
-            "text": date_to_convert.strftime('%-I:%M %p'),
+            "text": date_to_convert.strftime(LOCALE_FORMATS[LOCALE]["t"]),
             "subtext": "Short Time",
             "icon": TIME_ICON,
             "clipboardText": f"<t:{unix_timestamp}:t>",
         },
-        # Long Time (e.g. "4:08:48 AM")
         {
             "modifier": "T",
-            "text": date_to_convert.strftime('%-I:%M:%S %p'),
+            "text": date_to_convert.strftime(LOCALE_FORMATS[LOCALE]["T"]),
             "subtext": "Long Time",
             "icon": TIME_ICON,
             "clipboardText": f"<t:{unix_timestamp}:T>",
         },
-        # Short Date (e.g. "08/28/2021")
         {
             "modifier": "d",
-            "text": date_to_convert.strftime('%m/%d/%Y'),
+            "text": date_to_convert.strftime(LOCALE_FORMATS[LOCALE]["d"]),
             "subtext": "Short Date",
             "icon": DATE_ICON,
             "clipboardText": f"<t:{unix_timestamp}:d>",
         },
-        # Long Date (e.g. "August 28, 2021")
         {
             "modifier": "D",
-            "text": date_to_convert.strftime('%B %-d, %Y'),
+            "text": date_to_convert.strftime(LOCALE_FORMATS[LOCALE]["D"]),
             "subtext": "Long Date",
             "icon": DATE_ICON,
             "clipboardText": f"<t:{unix_timestamp}:D>",
         },
-        # Relative Time (e.g. "in 2 hours")
         {
             "modifier": "R",
-            "text": date_to_convert.strftime('%-I:%M %p'),
+            # TODO: make this show the relative time
+            "text": date_to_convert.strftime(LOCALE_FORMATS[LOCALE]["t"]),
             "subtext": "Relative Time",
             "icon": RELATIVE_TIME_ICON,
             "clipboardText": f"<t:{unix_timestamp}:R>",
